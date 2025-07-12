@@ -800,3 +800,146 @@ a:hover {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Add these to your existing CSS */
+
+/* Rich Text Editor Styles */
+.ck-editor__editable {
+    min-height: 200px;
+}
+
+/* Tag Styles */
+.tag {
+    display: inline-block;
+    background-color: #e1ecf4;
+    color: #39739d;
+    padding: 4px 8px;
+    margin: 2px;
+    border-radius: 3px;
+    font-size: 0.9rem;
+}
+
+/* Notification Styles */
+.notification-icon {
+    position: relative;
+    margin-left: 15px;
+}
+
+.bell-icon {
+    font-size: 1.2rem;
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background-color: var(--danger-color);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    width: 350px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    z-index: 1000;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-header {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.notification-list {
+    padding: 0;
+}
+
+.notification-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--light-gray);
+    transition: background 0.2s;
+}
+
+.notification-item:hover {
+    background: #f8f9fa;
+}
+
+.notification-item.unread {
+    background: #f0f7ff;
+}
+
+.notification-footer {
+    padding: 10px 15px;
+    text-align: center;
+    border-top: 1px solid var(--light-gray);
+}
+
+/* Question Tags */
+.question-tags {
+    margin: 10px 0;
+}
+
+.question-tags .tag {
+    margin-right: 5px;
+}
+
+
+
+
+
+
+
+/* Edit Page Styles */
+.edit-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.edit-card {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.edit-card h2 {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-secondary {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #f0f0f0;
+    color: #333;
+    border-radius: 4px;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+    text-decoration: none;
+}

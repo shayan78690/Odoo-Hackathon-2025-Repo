@@ -6,6 +6,16 @@
 <div class="question-page">
     <div class="question-header">
         <h1>{{ question.title }}</h1>
+        
+        <!-- Question Tags -->
+        {% if question.tags %}
+        <div class="question-tags">
+            {% for qt in question.tags %}
+                <span class="tag">{{ qt.tag.name }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
         <div class="question-meta">
             <span class="date">Asked on {{ question.created_at.strftime('%B %d, %Y') }}</span>
             <span class="views">{{ question.views }} views</span>
@@ -27,7 +37,7 @@
         </div>
         
         <div class="question-body">
-            <p>{{ question.content }}</p>
+            <div class="question-text">{{ question.content|safe }}</div>
             
             <div class="question-footer">
                 <div class="author-info">
@@ -37,8 +47,8 @@
                 
                 {% if current_user.id == question.user_id %}
                     <div class="question-actions">
-                        <a href="#" class="edit-link">Edit</a>
-                        <a href="#" class="delete-link">Delete</a>
+                        <a href="{{ url_for('edit_question', id=question.id) }}" class="edit-link">Edit</a>
+                        <a href="{{ url_for('delete_question', id=question.id) }}" class="delete-link" onclick="return confirm('Are you sure you want to delete this question?')">Delete</a>
                     </div>
                 {% endif %}
             </div>
@@ -50,7 +60,7 @@
         
         {% if question.answers %}
             {% for answer in answers %}
-                <div class="answer-card {% if answer.is_accepted %}accepted-answer{% endif %}">
+                <div class="answer-card {% if answer.is_accepted %}accepted-answer{% endif %}" id="answer-{{ answer.id }}">
                     <div class="vote-section">
                         <button class="vote-btn upvote" data-type="answer" data-id="{{ answer.id }}">
                             <span>▲</span>
@@ -65,12 +75,12 @@
                         {% endif %}
                         
                         {% if answer.is_accepted %}
-                            <span class="accepted-label">Accepted</span>
+                            <span class="accepted-label"><i class="fas fa-check"></i> Accepted</span>
                         {% endif %}
                     </div>
                     
                     <div class="answer-body">
-                        <p>{{ answer.content }}</p>
+                        <div class="answer-text">{{ answer.content|safe }}</div>
                         
                         <div class="answer-footer">
                             <div class="author-info">
@@ -81,8 +91,8 @@
                             
                             {% if current_user.id == answer.user_id %}
                                 <div class="answer-actions">
-                                    <a href="#" class="edit-link">Edit</a>
-                                    <a href="#" class="delete-link">Delete</a>
+                                    <a href="{{ url_for('edit_answer', id=answer.id) }}" class="edit-link">Edit</a>
+                                    <a href="{{ url_for('delete_answer', id=answer.id) }}" class="delete-link" onclick="return confirm('Are you sure you want to delete this answer?')">Delete</a>
                                 </div>
                             {% endif %}
                         </div>
@@ -101,7 +111,7 @@
             <h3>Your Answer</h3>
             <form method="POST" action="{{ url_for('post_answer', question_id=question.id) }}">
                 <div class="form-group">
-                    <textarea id="content" name="content" rows="8" required></textarea>
+                    <textarea id="content" name="content" class="ckeditor" required></textarea>
                 </div>
                 <button type="submit" class="btn-primary">Post Answer</button>
             </form>
@@ -112,4 +122,12 @@
         </div>
     {% endif %}
 </div>
+
+<script>
+    // Initialize CKEditor for answer form
+    CKEDITOR.replace('content', {
+        filebrowserUploadUrl: '/upload',
+        filebrowserUploadMethod: 'form'
+    });
+</script>
 {% endblock %}

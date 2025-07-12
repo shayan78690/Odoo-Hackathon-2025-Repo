@@ -106,3 +106,65 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+
+// Add this to your existing JavaScript
+
+// Notification system
+if (document.getElementById('notification-bell')) {
+    const notificationBell = document.getElementById('notification-bell');
+    const notificationDropdown = document.getElementById('notification-dropdown');
+    const notificationList = document.getElementById('notification-list');
+    
+    // Load notifications
+    function loadNotifications() {
+        fetch('/notifications')
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    document.getElementById('notification-count').textContent = data.length;
+                    notificationList.innerHTML = data.map(n => `
+                        <div class="notification-item ${n.is_read ? '' : 'unread'}" data-id="${n.id}">
+                            <p>${n.content}</p>
+                            <small>${n.created_at}</small>
+                        </div>
+                    `).join('');
+                } else {
+                    notificationList.innerHTML = '<div class="notification-item"><p>No new notifications</p></div>';
+                }
+            });
+    }
+    
+    // Toggle dropdown
+    notificationBell.addEventListener('click', (e) => {
+        e.preventDefault();
+        notificationDropdown.style.display = notificationDropdown.style.display === 'block' ? 'none' : 'block';
+        loadNotifications();
+    });
+    
+    // Click notification
+    notificationList.addEventListener('click', (e) => {
+        const item = e.target.closest('.notification-item');
+        if (item) {
+            const id = item.getAttribute('data-id');
+            fetch(`/notifications/mark_read/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        item.classList.remove('unread');
+                    }
+                });
+        }
+    });
+    
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!notificationBell.contains(e.target) && !notificationDropdown.contains(e.target)) {
+            notificationDropdown.style.display = 'none';
+        }
+    });
+    
+    // Poll for new notifications every 30 seconds
+    setInterval(loadNotifications, 30000);
+    loadNotifications();
+}

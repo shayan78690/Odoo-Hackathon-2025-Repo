@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Question - StackIt{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+    <div class="edit-card">
+        <h2>Edit Question</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="title">Question Title</label>
+                <input type="text" id="title" name="title" value="{{ question.title }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="content">Details</label>
+                <textarea id="content" name="content" class="ckeditor" required>{{ question.content }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="tags">Tags (comma separated)</label>
+                <input type="text" id="tags" name="tags" value="{{ current_tags }}" placeholder="e.g., python, flask, web-development">
+                <small class="form-text">Add up to 5 tags to describe your question</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="category_id">Category</label>
+                <select id="category_id" name="category_id">
+                    <option value="">No category</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" 
+                            {% if question.category_id == category.id %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Update Question</button>
+                <a href="{{ url_for('view_question', id=question.id) }}" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Initialize CKEditor
+    CKEDITOR.replace('content', {
+        filebrowserUploadUrl: '/upload',
+        filebrowserUploadMethod: 'form',
+        removePlugins: 'elementspath',
+        resize_enabled: false
+    });
+</script>
+{% endblock %}

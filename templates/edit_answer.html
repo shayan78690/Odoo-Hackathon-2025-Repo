@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Answer - StackIt{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+    <div class="edit-card">
+        <h2>Edit Your Answer</h2>
+        <p class="question-preview">For question: <strong>{{ answer.question.title }}</strong></p>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="content">Your Answer</label>
+                <textarea id="content" name="content" class="ckeditor" required>{{ answer.content }}</textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Update Answer</button>
+                <a href="{{ url_for('view_question', id=answer.question_id) }}" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Initialize CKEditor with simpler configuration
+    CKEDITOR.replace('content', {
+        filebrowserUploadUrl: '/upload',
+        filebrowserUploadMethod: 'form',
+        toolbar: [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['Image']
+        ],
+        removePlugins: 'elementspath',
+        resize_enabled: false
+    });
+</script>
+
+<style>
+    .question-preview {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        color: #555;
+    }
+</style>
+{% endblock %}

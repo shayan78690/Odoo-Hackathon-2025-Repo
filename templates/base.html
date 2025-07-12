@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}StackIt - Q&A Platform{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header class="header">
@@ -19,6 +20,29 @@
                     {% if current_user.is_authenticated %}
                         <a href="{{ url_for('ask_question') }}" class="btn-primary">Ask Question</a>
                         <a href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
+                        
+                        <!-- Notification Bell -->
+                        <div class="notification-icon">
+                            <a href="#" id="notification-bell">
+                                <i class="fas fa-bell"></i>
+                                <span class="badge" id="notification-count">0</span>
+                            </a>
+                            <div class="notification-dropdown" id="notification-dropdown">
+                                <div class="notification-header">
+                                    <h4>Notifications</h4>
+                                </div>
+                                <div class="notification-list" id="notification-list">
+                                    <div class="notification-empty">
+                                        <p>No new notifications</p>
+                                    </div>
+                                </div>
+                                <div class="notification-footer">
+                                    <a href="#">View All</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Notification Bell -->
+                        
                         {% if current_user.is_admin %}
                             <a href="{{ url_for('admin_dashboard') }}">Admin</a>
                         {% endif %}
@@ -54,6 +78,8 @@
         </div>
     </footer>
 
+    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

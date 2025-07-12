@@ -15,7 +15,13 @@
             
             <div class="form-group">
                 <label for="content">Details</label>
-                <textarea id="content" name="content" rows="10" placeholder="Provide details about your question..." required></textarea>
+                <textarea id="content" name="content" class="ckeditor" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="tags">Tags (comma separated)</label>
+                <input type="text" id="tags" name="tags" placeholder="e.g., python, flask, web-development">
+                <small class="form-text">Add up to 5 tags to describe your question</small>
             </div>
             
             <div class="form-group">
@@ -32,4 +38,13 @@
         </form>
     </div>
 </div>
+
+<!-- Initialize CKEditor -->
+<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('content', {
+        filebrowserUploadUrl: '/upload',
+        filebrowserUploadMethod: 'form'
+    });
+</script>
 {% endblock %}
