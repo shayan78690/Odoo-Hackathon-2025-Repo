@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}StackIt - Q&A Platform{% endblock %}</title>
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -14,14 +15,20 @@
                 <a href="{{ url_for('index') }}" class="logo">
                     <h1>StackIt</h1>
                 </a>
-                
-                <div class="nav-links">
+
+                <!-- Hamburger icon -->
+                <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Navigation links -->
+                <div class="nav-links" id="navMenu">
                     <a href="{{ url_for('index') }}">Home</a>
                     {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('ask_question') }}" class="btn-primary">Ask Question</a>
+                        <a href="{{ url_for('ask_question') }}" class="btn-primary">Ask</a>
                         <a href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
-                        
-                        <!-- Notification Bell -->
+
+                        <!-- Notification -->
                         <div class="notification-icon">
                             <a href="#" id="notification-bell">
                                 <i class="fas fa-bell"></i>
@@ -41,8 +48,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- End Notification Bell -->
-                        
+
                         {% if current_user.is_admin %}
                             <a href="{{ url_for('admin_dashboard') }}">Admin</a>
                         {% endif %}
@@ -67,7 +73,7 @@
                     </div>
                 {% endif %}
             {% endwith %}
-            
+
             {% block content %}{% endblock %}
         </div>
     </main>
@@ -78,8 +84,28 @@
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Hamburger toggle
+        document.getElementById('hamburgerBtn').addEventListener('click', () => {
+            document.getElementById('navMenu').classList.toggle('active');
+        });
+
+        // Optional: Close dropdowns on click outside
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('#notification-bell') && !e.target.closest('#notification-dropdown')) {
+                document.getElementById('notification-dropdown')?.classList.remove('show');
+            }
+        });
+
+        // Optional: Notification dropdown toggle
+        document.getElementById('notification-bell')?.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('notification-dropdown').classList.toggle('show');
+        });
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
