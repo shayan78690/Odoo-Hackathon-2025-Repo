@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - StackIt{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>Admin Dashboard</h1>
+    
+    <div class="admin-stats">
+        <div class="stat-card">
+            <h3>Total Users</h3>
+            <p class="stat-number">{{ stats.total_users }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Total Questions</h3>
+            <p class="stat-number">{{ stats.total_questions }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Total Answers</h3>
+            <p class="stat-number">{{ stats.total_answers }}</p>
+        </div>
+        <div class="stat-card warning">
+            <h3>Pending Questions</h3>
+            <p class="stat-number">{{ stats.pending_questions }}</p>
+        </div>
+        <div class="stat-card warning">
+            <h3>Pending Answers</h3>
+            <p class="stat-number">{{ stats.pending_answers }}</p>
+        </div>
+    </div>
+    
+    <div class="admin-sections">
+        <div class="admin-section">
+            <h2>Recent Questions</h2>
+            <div class="recent-questions">
+                {% for question in recent_questions %}
+                    <div class="recent-item">
+                        <h4><a href="{{ url_for('view_question', id=question.id) }}">{{ question.title }}</a></h4>
+                        <div class="item-meta">
+                            <span>by {{ question.author.username }}</span>
+                            <span>{{ question.created_at.strftime('%B %d, %Y') }}</span>
+                            {% if not question.is_approved %}
+                                <a href="{{ url_for('approve_content', type='question', id=question.id) }}" class="btn-small">Approve</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Recent Users</h2>
+            <div class="recent-users">
+                {% for user in recent_users %}
+                    <div class="recent-item">
+                        <h4><a href="{{ url_for('profile', username=user.username) }}">{{ user.username }}</a></h4>
+                        <div class="item-meta">
+                            <span>Joined {{ user.created_at.strftime('%B %d, %Y') }}</span>
+                            <span>{{ user.reputation }} reputation</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

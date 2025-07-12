@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}{{ question.title }} - StackIt{% endblock %}
+
+{% block content %}
+<div class="question-page">
+    <div class="question-header">
+        <h1>{{ question.title }}</h1>
+        <div class="question-meta">
+            <span class="date">Asked on {{ question.created_at.strftime('%B %d, %Y') }}</span>
+            <span class="views">{{ question.views }} views</span>
+            {% if question.category %}
+                <span class="category-tag">{{ question.category.name }}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="question-content">
+        <div class="vote-section">
+            <button class="vote-btn upvote" data-type="question" data-id="{{ question.id }}">
+                <span>▲</span>
+            </button>
+            <span class="vote-count">{{ question.get_vote_score() }}</span>
+            <button class="vote-btn downvote" data-type="question" data-id="{{ question.id }}">
+                <span>▼</span>
+            </button>
+        </div>
+        
+        <div class="question-body">
+            <p>{{ question.content }}</p>
+            
+            <div class="question-footer">
+                <div class="author-info">
+                    <span>Asked by <a href="{{ url_for('profile', username=question.author.username) }}">{{ question.author.username }}</a></span>
+                    <span class="reputation">{{ question.author.reputation }} reputation</span>
+                </div>
+                
+                {% if current_user.id == question.user_id %}
+                    <div class="question-actions">
+                        <a href="#" class="edit-link">Edit</a>
+                        <a href="#" class="delete-link">Delete</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="answers-section">
+        <h2>{{ question.answers|length }} Answers</h2>
+        
+        {% if question.answers %}
+            {% for answer in answers %}
+                <div class="answer-card {% if answer.is_accepted %}accepted-answer{% endif %}">
+                    <div class="vote-section">
+                        <button class="vote-btn upvote" data-type="answer" data-id="{{ answer.id }}">
+                            <span>▲</span>
+                        </button>
+                        <span class="vote-count">{{ answer.get_vote_score() }}</span>
+                        <button class="vote-btn downvote" data-type="answer" data-id="{{ answer.id }}">
+                            <span>▼</span>
+                        </button>
+                        
+                        {% if current_user.id == question.user_id and not answer.is_accepted %}
+                            <button class="accept-btn" data-id="{{ answer.id }}">Accept</button>
+                        {% endif %}
+                        
+                        {% if answer.is_accepted %}
+                            <span class="accepted-label">Accepted</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="answer-body">
+                        <p>{{ answer.content }}</p>
+                        
+                        <div class="answer-footer">
+                            <div class="author-info">
+                                <span>Answered by <a href="{{ url_for('profile', username=answer.author.username) }}">{{ answer.author.username }}</a></span>
+                                <span class="reputation">{{ answer.author.reputation }} reputation</span>
+                            </div>
+                            <span class="date">{{ answer.created_at.strftime('%B %d, %Y') }}</span>
+                            
+                            {% if current_user.id == answer.user_id %}
+                                <div class="answer-actions">
+                                    <a href="#" class="edit-link">Edit</a>
+                                    <a href="#" class="delete-link">Delete</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>No answers yet. Be the first to answer!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if current_user.is_authenticated %}
+        <div class="answer-form-section">
+            <h3>Your Answer</h3>
+            <form method="POST" action="{{ url_for('post_answer', question_id=question.id) }}">
+                <div class="form-group">
+                    <textarea id="content" name="content" rows="8" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Post Answer</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="login-prompt">
+            <p><a href="{{ url_for('login') }}">Login</a> or <a href="{{ url_for('register') }}">register</a> to post an answer.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

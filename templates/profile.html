@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }} - StackIt{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {% if user.profile_picture %}
+                <img src="{{ url_for('static', filename='uploads/' + user.profile_picture) }}" alt="{{ user.username }}">
+            {% else %}
+                <div class="avatar-placeholder">{{ user.username|first|upper }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="profile-info">
+            <h1>{{ user.username }}</h1>
+            <p class="reputation">Reputation: {{ user.reputation }}</p>
+            <p class="member-since">Member since {{ user.created_at.strftime('%B %Y') }}</p>
+            
+            {% if user.bio %}
+                <p class="bio">{{ user.bio }}</p>
+            {% endif %}
+            
+            {% if current_user.id == user.id %}
+                <a href="#" class="btn-secondary">Edit Profile</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="profile-content">
+        <div class="profile-tabs">
+            <button class="tab-btn active" data-tab="questions">Questions</button>
+            <button class="tab-btn" data-tab="answers">Answers</button>
+            <button class="tab-btn" data-tab="activity">Activity</button>
+        </div>
+        
+        <div class="tab-content active" id="questions-tab">
+            {% if questions %}
+                <div class="user-questions">
+                    {% for question in questions %}
+                        <div class="user-question">
+                            <h3><a href="{{ url_for('view_question', id=question.id) }}">{{ question.title }}</a></h3>
+                            <div class="question-stats">
+                                <span>{{ question.get_vote_score() }} votes</span>
+                                <span>{{ question.answers|length }} answers</span>
+                                <span>{{ question.views }} views</span>
+                            </div>
+                            <span class="date">{{ question.created_at.strftime('%B %d, %Y') }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>No questions yet.</p>
+                    {% if current_user.id == user.id %}
+                        <a href="{{ url_for('ask_question') }}" class="btn-primary">Ask a Question</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="tab-content" id="answers-tab">
+            {% if answers %}
+                <div class="user-answers">
+                    {% for answer in answers %}
+                        <div class="user-answer">
+                            <h3><a href="{{ url_for('view_question', id=answer.question.id) }}">{{ answer.question.title }}</a></h3>
+                            <div class="answer-excerpt">{{ answer.content[:200] }}{% if answer.content|length > 200 %}...{% endif %}</div>
+                            <div class="answer-stats">
+                                <span>{{ answer.get_vote_score() }} votes</span>
+                                {% if answer.is_accepted %}
+                                    <span class="accepted">Accepted</span>
+                                {% endif %}
+                            </div>
+                            <span class="date">{{ answer.created_at.strftime('%B %d, %Y') }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>No answers yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

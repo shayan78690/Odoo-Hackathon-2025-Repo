@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="home-header">
+    <h1>Welcome to StackIt</h1>
+    <p>Ask questions, share knowledge, and learn together</p>
+</div>
+
+<div class="search-section">
+    <form method="GET" class="search-form">
+        <div class="search-input-group">
+            <input type="text" name="search" placeholder="Search questions..." value="{{ search_query or '' }}" class="search-input">
+            <select name="category" class="category-select">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category_filter == category.id|string %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn-primary">Search</button>
+        </div>
+    </form>
+</div>
+
+<div class="content-grid">
+    <div class="main-content">
+        <div class="questions-header">
+            <h2>Recent Questions</h2>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('ask_question') }}" class="btn-primary">Ask Question</a>
+            {% endif %}
+        </div>
+
+        {% if questions %}
+            <div class="questions-list">
+                {% for question in questions %}
+                    <div class="question-card">
+                        <div class="question-stats">
+                            <div class="stat">
+                                <span class="stat-number">{{ question.get_vote_score() }}</span>
+                                <span class="stat-label">votes</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">{{ question.answers|length }}</span>
+                                <span class="stat-label">answers</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">{{ question.views }}</span>
+                                <span class="stat-label">views</span>
+                            </div>
+                        </div>
+                        
+                        <div class="question-content">
+                            <h3><a href="{{ url_for('view_question', id=question.id) }}">{{ question.title }}</a></h3>
+                            <p class="question-excerpt">{{ question.content[:150] }}{% if question.content|length > 150 %}...{% endif %}</p>
+                            
+                            <div class="question-meta">
+                                {% if question.category %}
+                                    <span class="category-tag">{{ question.category.name }}</span>
+                                {% endif %}
+                                <span class="author">
+                                    by <a href="{{ url_for('profile', username=question.author.username) }}">{{ question.author.username }}</a>
+                                </span>
+                                <span class="date">{{ question.created_at.strftime('%B %d, %Y') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3>No questions found</h3>
+                <p>Be the first to ask a question!</p>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('ask_question') }}" class="btn-primary">Ask Question</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn-primary">Login to Ask</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="sidebar">
+        <div class="sidebar-section">
+            <h3>Popular Categories</h3>
+            <div class="category-list">
+                {% for category in categories %}
+                    <a href="{{ url_for('index', category=category.id) }}" class="category-item">
+                        <span class="category-name">{{ category.name }}</span>
+                        <span class="category-count">{{ category.questions|length }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>How it works</h3>
+            <ul class="help-list">
+                <li>Ask questions about any topic</li>
+                <li>Get answers from the community</li>
+                <li>Vote on helpful content</li>
+                <li>Build your reputation</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
