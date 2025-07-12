@@ -1,111 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}StackIt - Q&A Platform{% endblock %}</title>
-    
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}StackIt - Q&A Platform{% endblock %}</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
-<body>
-    <header class="header">
-        <div class="container">
-            <nav class="navbar">
-                <a href="{{ url_for('index') }}" class="logo">
-                    <h1>StackIt</h1>
-                </a>
 
-                <!-- Hamburger icon -->
-                <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
-                    <i class="fas fa-bars"></i>
-                </button>
+<body class="bg-gray-50 text-gray-800">
 
-                <!-- Navigation links -->
-                <div class="nav-links" id="navMenu">
-                    <a href="{{ url_for('index') }}">Home</a>
-                    {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('ask_question') }}" class="btn-primary">Ask</a>
-                        <a href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
+  <!-- Header -->
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <!-- Logo -->
+      <a href="{{ url_for('index') }}" class="text-2xl font-bold text-indigo-600">
+        StackIt
+      </a>
 
-                        <!-- Notification -->
-                        <div class="notification-icon">
-                            <a href="#" id="notification-bell">
-                                <i class="fas fa-bell"></i>
-                                <span class="badge" id="notification-count">0</span>
-                            </a>
-                            <div class="notification-dropdown" id="notification-dropdown">
-                                <div class="notification-header">
-                                    <h4>Notifications</h4>
-                                </div>
-                                <div class="notification-list" id="notification-list">
-                                    <div class="notification-empty">
-                                        <p>No new notifications</p>
-                                    </div>
-                                </div>
-                                <div class="notification-footer">
-                                    <a href="#">View All</a>
-                                </div>
-                            </div>
-                        </div>
+      <!-- Hamburger (Mobile) -->
+      <button id="hamburgerBtn" class="md:hidden text-gray-600 text-xl">
+        <i class="fas fa-bars"></i>
+      </button>
 
-                        {% if current_user.is_admin %}
-                            <a href="{{ url_for('admin_dashboard') }}">Admin</a>
-                        {% endif %}
-                        <a href="{{ url_for('logout') }}">Logout</a>
-                    {% else %}
-                        <a href="{{ url_for('login') }}">Login</a>
-                        <a href="{{ url_for('register') }}">Register</a>
-                    {% endif %}
-                </div>
-            </nav>
-        </div>
-    </header>
+      <!-- Navigation -->
+      <nav id="navMenu"
+           class="hidden md:flex gap-4 items-center text-sm font-medium">
+        <a href="{{ url_for('index') }}" class="text-gray-700 hover:text-indigo-600">Home</a>
 
-    <main class="main">
-        <div class="container">
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <div class="flash-messages">
-                        {% for message in messages %}
-                            <div class="alert alert-info">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('ask_question') }}" class="text-white bg-emerald-600 px-3 py-1.5 rounded hover:bg-emerald-700 transition">
+            Ask
+          </a>
+          <a href="{{ url_for('profile', username=current_user.username) }}" class="text-gray-700 hover:text-indigo-600">Profile</a>
 
-            {% block content %}{% endblock %}
-        </div>
-    </main>
+          <!-- Notifications -->
+          <div class="relative">
+            <button id="notification-bell" class="relative text-gray-600 hover:text-indigo-600">
+              <i class="fas fa-bell text-lg"></i>
+              <span id="notification-count"
+                    class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                0
+              </span>
+            </button>
+            <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg z-50">
+              <div class="p-3 border-b font-semibold">Notifications</div>
+              <div class="p-3 text-sm text-gray-600" id="notification-list">
+                <p class="text-center text-gray-500">No new notifications</p>
+              </div>
+              <div class="border-t p-2 text-center">
+                <a href="#" class="text-indigo-600 hover:underline text-sm">View All</a>
+              </div>
+            </div>
+          </div>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 StackIt. A simple Q&A platform for collaborative learning.</p>
-        </div>
-    </footer>
+          {% if current_user.is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}" class="text-gray-700 hover:text-indigo-600">Admin</a>
+          {% endif %}
 
-    <!-- Scripts -->
-    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script>
-        // Hamburger toggle
-        document.getElementById('hamburgerBtn').addEventListener('click', () => {
-            document.getElementById('navMenu').classList.toggle('active');
-        });
+          <a href="{{ url_for('logout') }}" class="text-gray-700 hover:text-indigo-600">Logout</a>
 
-        // Optional: Close dropdowns on click outside
-        window.addEventListener('click', function(e) {
-            if (!e.target.closest('#notification-bell') && !e.target.closest('#notification-dropdown')) {
-                document.getElementById('notification-dropdown')?.classList.remove('show');
-            }
-        });
+        {% else %}
+          <a href="{{ url_for('login') }}" class="text-gray-700 hover:text-indigo-600">Login</a>
+          <a href="{{ url_for('register') }}" class="text-indigo-600 border border-indigo-600 px-3 py-1 rounded hover:bg-indigo-600 hover:text-white transition">Register</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
 
-        // Optional: Notification dropdown toggle
-        document.getElementById('notification-bell')?.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.getElementById('notification-dropdown').classList.toggle('show');
-        });
-    </script>
-    {% block scripts %}{% endblock %}
+  <!-- Main Content -->
+  <main class="py-8">
+    <div class="max-w-7xl mx-auto px-4">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="mb-4 space-y-2">
+            {% for message in messages %}
+              <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t mt-10">
+    <div class="max-w-7xl mx-auto px-4 py-4 text-center text-sm text-gray-500">
+      &copy; 2024 StackIt. A simple Q&A platform for collaborative learning.
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+  <script>
+    // Hamburger toggle
+    document.getElementById('hamburgerBtn')?.addEventListener('click', () => {
+      const nav = document.getElementById('navMenu');
+      nav.classList.toggle('hidden');
+      nav.classList.toggle('flex');
+      nav.classList.toggle('flex-col');
+      nav.classList.toggle('absolute');
+      nav.classList.toggle('top-16');
+      nav.classList.toggle('right-4');
+      nav.classList.toggle('bg-white');
+      nav.classList.toggle('p-4');
+      nav.classList.toggle('shadow-lg');
+      nav.classList.toggle('rounded-lg');
+    });
+
+    // Notification dropdown
+    document.getElementById('notification-bell')?.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('notification-dropdown')?.classList.toggle('hidden');
+    });
+
+    window.addEventListener('click', function (e) {
+      if (!e.target.closest('#notification-bell') && !e.target.closest('#notification-dropdown')) {
+        document.getElementById('notification-dropdown')?.classList.add('hidden');
+      }
+    });
+  </script>
+
+  {% block scripts %}{% endblock %}
 </body>
 </html>

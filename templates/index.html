@@ -1,100 +1,135 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="home-header">
-        <h1>Welcome to <span class="highlight">StackIt</span></h1>
-        <p class="subtitle">Ask questions, share knowledge, and learn together</p>
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <!-- Hero Section -->
+    <div class="text-center mb-12">
+        <h1 class="text-5xl font-extrabold text-indigo-600">Welcome to <span class="text-gray-900">StackIt</span></h1>
+        <p class="text-lg text-gray-600 mt-2">Ask questions, share knowledge, and learn together</p>
     </div>
 
-    <div class="search-section">
-        <form method="GET" class="search-form">
-            <input type="text" name="search" placeholder="Search questions..." value="{{ search_query or '' }}">
-            <select name="category">
-                <option value="">All Categories</option>
-                {% for category in categories %}
-                    <option value="{{ category.id }}" {% if category_filter == category.id|string %}selected{% endif %}>
-                        {{ category.name }}
-                    </option>
-                {% endfor %}
-            </select>
-            <button type="submit">Search</button>
-        </form>
-    </div>
+    <!-- Search -->
+    <form method="GET" class="flex flex-col md:flex-row items-center gap-4 mb-10">
+        <input type="text" name="search" placeholder="Search questions..."
+               value="{{ search_query or '' }}"
+               class="w-full md:w-2/3 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent">
+        <select name="category"
+                class="w-full md:w-1/4 px-3 py-2 border border-gray-300 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+                <option value="{{ category.id }}" {% if category_filter == category.id|string %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit"
+                class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition">
+            Search
+        </button>
+    </form>
 
-    <div class="content-grid">
-        <!-- Main Questions -->
-        <div class="main-content">
-            <div class="questions-header">
-                <h2>Recent Questions</h2>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Questions -->
+        <div class="md:col-span-3 space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-semibold text-gray-800">Recent Questions</h2>
                 {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('ask_question') }}" class="btn">Ask Question</a>
+                    <a href="{{ url_for('ask_question') }}"
+                       class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition">
+                        Ask Question
+                    </a>
                 {% endif %}
             </div>
 
             {% if questions %}
-                <div class="questions-list">
-                    {% for question in questions %}
-                        <div class="question-card">
-                            <div class="question-stats">
-                                <div class="stat">
-                                    <span class="stat-number">{{ question.get_vote_score() }}</span>
-                                    <span class="stat-label">votes</span>
+                {% for question in questions %}
+                    <div class="border border-gray-200 rounded-xl p-5 bg-white shadow hover:shadow-md transition duration-300">
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <!-- Stats -->
+                            <div class="flex justify-around md:flex-col text-center w-full md:w-28 text-sm text-gray-500">
+                                <div>
+                                    <p class="font-bold text-gray-800 text-lg">{{ question.get_vote_score() }}</p>
+                                    <p>Votes</p>
                                 </div>
-                                <div class="stat">
-                                    <span class="stat-number">{{ question.answers|length }}</span>
-                                    <span class="stat-label">answers</span>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-lg">{{ question.answers|length }}</p>
+                                    <p>Answers</p>
                                 </div>
-                                <div class="stat">
-                                    <span class="stat-number">{{ question.views }}</span>
-                                    <span class="stat-label">views</span>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-lg">{{ question.views }}</p>
+                                    <p>Views</p>
                                 </div>
                             </div>
 
-                            <div class="question-content">
-                                <h3><a href="{{ url_for('view_question', id=question.id) }}">{{ question.title }}</a></h3>
-                                <p>{{ question.content[:150] }}{% if question.content|length > 150 %}...{% endif %}</p>
-                                <div class="question-meta">
+                            <!-- Content -->
+                            <div class="flex-1">
+                                <h3 class="text-xl font-semibold text-indigo-700 hover:underline mb-1">
+                                    <a href="{{ url_for('view_question', id=question.id) }}">
+                                        {{ question.title }}
+                                    </a>
+                                </h3>
+                                <p class="text-gray-600 mb-2">
+                                    {{ question.content[:150] }}{% if question.content|length > 150 %}...{% endif %}
+                                </p>
+                                <div class="mt-1 flex flex-wrap items-center text-sm text-gray-500 gap-2">
                                     {% if question.category %}
-                                        <span class="tag">{{ question.category.name }}</span>
+                                        <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-xs">
+                                            {{ question.category.name }}
+                                        </span>
                                     {% endif %}
-                                    <span class="author">by <a href="{{ url_for('profile', username=question.author.username) }}">{{ question.author.username }}</a></span>
-                                    <span class="date">{{ question.created_at.strftime('%B %d, %Y') }}</span>
+                                    <span>by 
+                                        <a href="{{ url_for('profile', username=question.author.username) }}"
+                                           class="text-blue-500 hover:underline font-medium">
+                                            {{ question.author.username }}
+                                        </a>
+                                    </span>
+                                    <span>on {{ question.created_at.strftime('%b %d, %Y') }}</span>
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
+                    </div>
+                {% endfor %}
             {% else %}
-                <div class="empty-state">
-                    <h3>No questions found</h3>
-                    <p>Be the first to ask a question!</p>
+                <div class="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2">No questions found</h3>
+                    <p class="text-gray-500 mb-4">Be the first to ask a question!</p>
                     {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('ask_question') }}" class="btn">Ask Question</a>
+                        <a href="{{ url_for('ask_question') }}"
+                           class="px-5 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition">
+                            Ask Question
+                        </a>
                     {% else %}
-                        <a href="{{ url_for('login') }}" class="btn">Login to Ask</a>
+                        <a href="{{ url_for('login') }}"
+                           class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            Login to Ask
+                        </a>
                     {% endif %}
                 </div>
             {% endif %}
         </div>
 
         <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-section">
-                <h3>Popular Categories</h3>
-                <div class="category-list">
+        <div class="space-y-6">
+            <div class="bg-white border border-gray-200 rounded-xl p-5 shadow">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Popular Categories</h3>
+                <ul class="space-y-2 text-sm text-gray-700">
                     {% for category in categories %}
-                        <a href="{{ url_for('index', category=category.id) }}" class="category-item">
-                            <span>{{ category.name }}</span>
-                            <span class="count">{{ category.questions|length }}</span>
-                        </a>
+                        <li class="flex justify-between items-center">
+                            <a href="{{ url_for('index', category=category.id) }}"
+                               class="hover:underline text-indigo-600 font-medium">
+                                {{ category.name }}
+                            </a>
+                            <span class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-xs">
+                                {{ category.questions|length }}
+                            </span>
+                        </li>
                     {% endfor %}
-                </div>
+                </ul>
             </div>
 
-            <div class="sidebar-section">
-                <h3>How it works</h3>
-                <ul class="help-list">
+            <div class="bg-white border border-gray-200 rounded-xl p-5 shadow">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">How it works</h3>
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
                     <li>Ask questions about any topic</li>
                     <li>Get answers from the community</li>
                     <li>Vote on helpful content</li>
